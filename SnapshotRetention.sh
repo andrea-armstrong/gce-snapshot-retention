@@ -153,7 +153,7 @@ deleteSnapshot()
 		echo "Valid yearly - keeping $snapshot"
 	else
 		echo "Deleting $snapshot"
-		$(gcloud compute snapshots delete --project $PROJECT $snapshot)
+		$(gcloud compute snapshots delete --project $PROJECT $snapshot --quiet)
 	fi
 }
 
