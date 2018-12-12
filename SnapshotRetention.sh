@@ -67,14 +67,14 @@ setScriptOptions()
     if [[ -n $opt_w ]]; then
         WEEKLY_RETENTION=$opt_w
     else
-    	WEEKLY_RETENTION=4
+        WEEKLY_RETENTION=4
     fi
 
     # Number of monthly snapshots to keep
     if [[ -n $opt_m ]]; then
         MONTHLY_RETENTION=$opt_m
     else
-    	MONTHLY_RETENTION=12
+        MONTHLY_RETENTION=12
     fi
 
     # Number of annual snapshots to keep
