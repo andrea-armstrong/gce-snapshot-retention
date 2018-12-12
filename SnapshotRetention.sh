@@ -4,13 +4,15 @@
 export PATH=$PATH:/snap/google-cloud-sdk/current/usr/bin/:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 usage() {
-    echo -e "\nUsage: $0 [-p <project>] [-d <days>] [-w <weeks>] [-y <years>] [-n <dry_run>]" 1>&2
+    echo -e "\nUsage: $0 [-p <project>] [-d <days>] [-w <weeks>] [-m <months>] [-y <years>] [-n <dry_run>]" 1>&2
     echo -e "\nOptions:\n"
     echo -e "    -p    Google project name. [REQUIRED]"
     echo -e "    -d    Number of days to keep daily snapshots.  Snapshots older than this number deleted."
     echo -e "          Default if not set: 7 [OPTIONAL]"
     echo -e "    -w    Number of weeks to keep weekly snapshots. Snapshots older than this number are deleted."
     echo -e "          Default if not set: 4 [OPTIONAL]"
+    echo -e "	 -m    Number of months to keep a monthly snapshot. Snapshots that fall on the 1st of the month"
+    echo -e "	       that are older than this retention are deleted. Default if not set: 12 [OPTIONAL]"		       
     echo -e "    -y    Number of years to keep annual snapshots. Snapshots older than this number are deleted."
     echo -e "          Default if not set: 5 [OPTIONAL]"
     echo -e "    -n    Dry run: causes script to print debug variables and doesn't execute any"
@@ -24,7 +26,7 @@ usage() {
 #
 setScriptOptions()
 {
-    while getopts ":p:d:w:y:n" opt; do
+    while getopts ":p:d:w:m:y:n" opt; do
         case $opt in
             p)
                 opt_p=${OPTARG}
@@ -35,6 +37,9 @@ setScriptOptions()
             w)
                 opt_w=${OPTARG}
                 ;;
+	    m)	
+	    	opt_m=${OPTARG}
+	    	;;
             y)
                 opt_y=${OPTARG}
                 ;;
@@ -65,6 +70,13 @@ setScriptOptions()
     	WEEKLY_RETENTION=4
     fi
 
+    # Number of monthly snapshots to keep
+    if [[ -n $opt_m ]]; then
+        MONTHLY_RETENTION=$opt_m
+    else
+    	MONTHLY_RETENTION=12
+    fi
+
     # Number of annual snapshots to keep
     if [[ -n $opt_y ]]; then
         YEARLY_RETENTION=$opt_y
@@ -81,6 +93,7 @@ setScriptOptions()
     if [ "$DRY_RUN" = true ]; then
         echo "DAILY_RETENTION=${DAILY_RETENTION}"
         echo "WEEKLY_RETENTION=${WEEKLY_RETENTION}"
+	echo "MONTHLY_RETENTION=${MONTHLY_RETENTION}"
         echo "YEARLY_RETENTION=${YEARLY_RETENTION}"
         echo "PROJECT=${PROJECT}"
         echo "DRY_RUN=${DRY_RUN}"
@@ -92,10 +105,7 @@ setScriptOptions()
 ifWeekly()
 {
 	local snapshotDate=$(date -d "$1" +"%Y%m%d")
-	local weeklyRetention=$(date -d "$1-${WEEKLY_RETENTION} weeks" +"%Y%m%d")	
-	echo "$snapshotDate"
-	echo "$weeklyRetention"
-
+	local weeklyRetention=$(date -d "$1-${WEEKLY_RETENTION} weeks" +"%Y%m%d")
 	if [[ $(date -d "$1" +"%u") == 7 ]] ; then
 		if [[ $snapshotDate -ge $weeklyRetention ]] ; then
 			echo "0"
@@ -110,9 +120,7 @@ ifWeekly()
 ifMonthly()
 {
 	local snapshotDate=$(date -d "$1" +"%Y%m%d")
-	local monthlyRetention=$(date -d "$1-${MONTHLY_RETENTION} months" +"%Y%m%d")	
-	echo "$snapshotDate"
-	echo "$monthlyRetention"
+	local monthlyRetention=$(date -d "$1-${MONTHLY_RETENTION} months" +"%Y%m%d")
 	if [ $(date -d "$1" +"%d") == 01 ] ; then
 		if [[ $snapshotDate -ge $monthlyRetention ]] ; then
 			echo "0"
@@ -127,9 +135,7 @@ ifMonthly()
 ifYearly()
 {
 	local snapshotDate=$(date -d "$1" +"%Y%m%d")
-	local yearlyRetention=$(date -d "$1-${YEARLY_RETENTION} years" +"%Y%m%d")	
-	echo "$snapshotDate"
-	echo "$yearlyRetention"
+	local yearlyRetention=$(date -d "$1-${YEARLY_RETENTION} years" +"%Y%m%d")
 	if [[ ($(date -d "$1" +"%d") == 01) && ($(date -d "$1" +"%b") == "Jan") ]] ; then
 		if [[ $snapshotDate -ge $yearlyRetention ]] ; then
 			echo "0"
