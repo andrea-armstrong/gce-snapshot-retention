@@ -11,7 +11,7 @@ usage() {
     echo -e "          Default if not set: 7 [OPTIONAL]"
     echo -e "    -w    Number of weeks to keep weekly snapshots. Snapshots older than this number are deleted."
     echo -e "          Default if not set: 4 [OPTIONAL]"
-    echo -e "	 -m    Number of months to keep a monthly snapshot. Snapshots that fall on the 1st of the month"
+    echo -e "    -m    Number of months to keep a monthly snapshot. Snapshots that fall on the 1st of the month"
     echo -e "	       that are older than this retention are deleted. Default if not set: 12 [OPTIONAL]"		       
     echo -e "    -y    Number of years to keep annual snapshots. Snapshots older than this number are deleted."
     echo -e "          Default if not set: 5 [OPTIONAL]"
@@ -37,9 +37,9 @@ setScriptOptions()
             w)
                 opt_w=${OPTARG}
                 ;;
-	        m)
-	    	    opt_m=${OPTARG}
-	    	    ;;
+	    m)
+	    	opt_m=${OPTARG}
+	    	;;
             y)
                 opt_y=${OPTARG}
                 ;;
@@ -93,7 +93,7 @@ setScriptOptions()
     if [ "$DRY_RUN" = true ]; then
         echo "DAILY_RETENTION=${DAILY_RETENTION}"
         echo "WEEKLY_RETENTION=${WEEKLY_RETENTION}"
-	    echo "MONTHLY_RETENTION=${MONTHLY_RETENTION}"
+	echo "MONTHLY_RETENTION=${MONTHLY_RETENTION}"
         echo "YEARLY_RETENTION=${YEARLY_RETENTION}"
         echo "PROJECT=${PROJECT}"
         echo "DRY_RUN=${DRY_RUN}"
