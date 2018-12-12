@@ -37,9 +37,9 @@ setScriptOptions()
             w)
                 opt_w=${OPTARG}
                 ;;
-	    m)	
-	    	opt_m=${OPTARG}
-	    	;;
+	        m)
+	    	    opt_m=${OPTARG}
+	    	    ;;
             y)
                 opt_y=${OPTARG}
                 ;;
@@ -93,7 +93,7 @@ setScriptOptions()
     if [ "$DRY_RUN" = true ]; then
         echo "DAILY_RETENTION=${DAILY_RETENTION}"
         echo "WEEKLY_RETENTION=${WEEKLY_RETENTION}"
-	echo "MONTHLY_RETENTION=${MONTHLY_RETENTION}"
+	    echo "MONTHLY_RETENTION=${MONTHLY_RETENTION}"
         echo "YEARLY_RETENTION=${YEARLY_RETENTION}"
         echo "PROJECT=${PROJECT}"
         echo "DRY_RUN=${DRY_RUN}"
